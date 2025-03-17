@@ -1,36 +1,42 @@
 import { doc, setDoc, getDoc } from "firebase/firestore"
 import { auth, db } from "@/lib/firebase"
 import { User } from "@/lib/types"
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth"
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut
+} from "firebase/auth"
+import { redirect } from "next/navigation"
 
 // Get current user
 export const getCurrentUser = async (): Promise<User | null> => {
-  const user = auth.currentUser;
+  const user = auth.currentUser
   if (user) {
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    const userData = userDoc.exists() ? userDoc.data() : {};
+    const userDoc = await getDoc(doc(db, "users", user.uid))
+    const userData = userDoc.exists() ? userDoc.data() : {}
     return {
       uid: user.uid,
       email: user.email || "",
       username: userData.username,
-      createdAt: userData.createdAt,
       displayName: userData.displayName,
-      photoURL: user.photoURL || "",
-    };
+      photoURL: user.photoURL || ""
+    }
   } else {
-    return null;
+    return null
   }
-};
+}
 
 // Google Sign-In
 export const signInWithGoogle = async (): Promise<void> => {
-  const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(auth, provider);
-  const { uid, email, displayName, photoURL } = result.user;
+  const provider = new GoogleAuthProvider()
+  const result = await signInWithPopup(auth, provider)
+  const { uid, email, displayName, photoURL } = result.user
 
   // Check if the user already exists in Firestore
-  const userRef = doc(db, "users", uid);
-  const userSnap = await getDoc(userRef);
+  const userRef = doc(db, "users", uid)
+  const userSnap = await getDoc(userRef)
 
   if (!userSnap.exists()) {
     // Store new user data in Firestore
@@ -39,10 +45,13 @@ export const signInWithGoogle = async (): Promise<void> => {
       email,
       displayName,
       photoURL,
-      createdAt: new Date(),
-    });
+      createdAt: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric"
+      })
+    })
   }
-};
+}
 
 // Email/Password Sign-In
 export const signInWithEmail = async (email: string, password: string) => {

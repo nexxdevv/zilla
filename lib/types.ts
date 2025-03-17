@@ -7,6 +7,5 @@ export interface User {
     bio?: string
     followers?: string[]
     following?: string[]
-    createdAt: string
     displayName: string
   }

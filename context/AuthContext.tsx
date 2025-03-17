@@ -15,6 +15,7 @@ import { ReactNode } from "react"
 
 interface AuthContextType {
   user: User | null
+  setUser: (user: User | null) => void
   loading: boolean
   signInWithGoogle: () => Promise<void>
   signInWithEmail: (email: string, password: string) => Promise<void>
@@ -46,10 +47,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           uid: currentUser.uid,
           email: currentUser.email || "",
           username: userData.username || "",
-          createdAt: userData.createdAt || null,
-          displayName: userData.displayName || "",
-          photoURL: currentUser.photoURL || "",
-          ...userData
+          displayName: currentUser.displayName || "",
+          photoURL: currentUser.photoURL || ""
         })
       } else {
         setUser(null)
@@ -96,6 +95,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         loading,
         signInWithGoogle: signInWithGoogleHandler,
         signInWithEmail: signInWithEmailHandler,

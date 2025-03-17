@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import { AuthProvider } from "@/context/AuthContext"
+import MobileNav from "@/components/mobile-nav"
 
 export const metadata: Metadata = {
   title: "Zilla",
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+          <MobileNav />
+        </AuthProvider>
       </body>
     </html>
   )
